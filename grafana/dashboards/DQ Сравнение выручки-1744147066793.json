@@ -1,0 +1,614 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 3,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P5C7E51E4B1E40CFE"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "with cte_postgres as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = 'facb8e28-3006-4414-9737-a4e4bd2db62b'\r\n    and task = 'transfer_postgres_weekly'\r\n  group by 1\r\n  order by 1 desc\r\n), cte_clickhouse as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = 'facb8e28-3006-4414-9737-a4e4bd2db62b'\r\n    and task = 'transfer_clickhouse_weekly'\r\n  group by 1\r\n  order by 1 desc\r\n)\r\nselect ROUND(((cc.revenue / cp.revenue) :: DECIMAL(10,2) - 1) * 100, 2) as \"% прибыль\"\r\nfrom cte_postgres cp\r\nleft join cte_clickhouse cc\r\n  on cp.valid_from_dttm = cc.valid_from_dttm\r\norder by 1 desc\r\nlimit 1;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Неделя",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P5C7E51E4B1E40CFE"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "with cte_postgres as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '55742de1-95c6-45b7-80a3-cf3502c56a3d'\r\n    and task = 'transfer_postgres_monthly'\r\n  group by 1\r\n  order by 1 desc\r\n), cte_clickhouse as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '55742de1-95c6-45b7-80a3-cf3502c56a3d'\r\n    and task = 'transfer_clickhouse_monthly'\r\n  group by 1\r\n  order by 1 desc\r\n)\r\nselect ROUND(((cc.revenue / cp.revenue) :: DECIMAL(10,2) - 1) * 100, 2) as \"% прибыль\"\r\nfrom cte_postgres cp\r\nleft join cte_clickhouse cc\r\n  on cp.valid_from_dttm = cc.valid_from_dttm\r\norder by 1 desc\r\nlimit 1;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Месяц",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P5C7E51E4B1E40CFE"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "Дата последнего обновления",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P5C7E51E4B1E40CFE"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "-- Table query\r\nwith cte_postgres as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '${agg_uuid}'\r\n    and task = 'transfer_postgres_${aggregation}'\r\n  group by 1\r\n), cte_clickhouse as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '${agg_uuid}'\r\n    and task = 'transfer_clickhouse_${aggregation}'\r\n  group by 1\r\n)\r\nselect\r\n  cp.valid_from_dttm :: date as \"Дата сверки\"\r\n  , cp.cost as \"Postgres выручка\"\r\n  , cc.cost as \"Clickhouse выручка\"\r\n  , ROUND(((cc.cost / cp.cost) :: DECIMAL(10,2) - 1) * 100, 2) as \"% выручка\"\r\nfrom cte_postgres cp\r\nleft join cte_clickhouse cc\r\n  on cp.valid_from_dttm = cc.valid_from_dttm\r\norder by 1 desc;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Panel Title",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P5C7E51E4B1E40CFE"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "-- Table query\r\nwith cte_postgres as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '${agg_uuid}'\r\n    and task = 'transfer_postgres_${aggregation}'\r\n  group by 1\r\n), cte_clickhouse as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '${agg_uuid}'\r\n    and task = 'transfer_clickhouse_${aggregation}'\r\n  group by 1\r\n)\r\nselect\r\n  cp.valid_from_dttm :: date as \"Дата сверки\"\r\n  , cp.revenue as \"Postgres прибыль\"\r\n  , cc.revenue as \"Clickhouse прибыль\"\r\n  , ROUND(((cc.revenue / cp.revenue) :: DECIMAL(10,2) - 1) * 100, 2) as \"% прибыль\"\r\nfrom cte_postgres cp\r\nleft join cte_clickhouse cc\r\n  on cp.valid_from_dttm = cc.valid_from_dttm\r\norder by 1 desc;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Panel Title",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P5C7E51E4B1E40CFE"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P5C7E51E4B1E40CFE"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "-- Table query\r\nwith cte_postgres as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '${agg_uuid}'\r\n    and task = 'transfer_postgres_${aggregation}'\r\n  group by 1\r\n), cte_clickhouse as (\r\n  select\r\n    valid_from_dttm\r\n    , SUM(cost) as cost\r\n    , SUM(revenue) as revenue\r\n  from data_quality_checks.customers_analytics__sales_data\r\n  where key = '${agg_uuid}'\r\n    and task = 'transfer_clickhouse_${aggregation}'\r\n  group by 1\r\n)\r\nselect\r\n  cp.valid_from_dttm as \"Дата сверки\"\r\n  , cp.cost as \"Postgres выручка\"\r\n  , cc.cost as \"Clickhouse выручка\"\r\n  , ABS(cp.cost - cc.cost) as \"abs выручка\"\r\n  , ROUND(((cc.cost / cp.cost) :: DECIMAL(10,2) - 1) * 100, 2) as \"% выручка\"\r\n  , cp.revenue as \"Postgres прибыль\"\r\n  , cc.revenue as \"Clickhouse прибыль\"\r\n  , ABS(cp.revenue - cc.revenue) as \"abs прибыль\"\r\n  , ROUND(((cc.revenue / cp.revenue) :: DECIMAL(10,2) - 1) * 100, 2) as \"% прибыль\"\r\nfrom cte_postgres cp\r\nleft join cte_clickhouse cc\r\n  on cp.valid_from_dttm = cc.valid_from_dttm\r\norder by 1 desc;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Panel Title",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "weekly",
+          "value": "weekly"
+        },
+        "description": "",
+        "label": "Агрегация",
+        "name": "aggregation",
+        "options": [
+          {
+            "selected": true,
+            "text": "Неделя",
+            "value": "weekly"
+          },
+          {
+            "selected": false,
+            "text": "Месяц",
+            "value": "monthly"
+          }
+        ],
+        "query": "Неделя : weekly, Месяц : monthly",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "facb8e28-3006-4414-9737-a4e4bd2db62b",
+          "value": "facb8e28-3006-4414-9737-a4e4bd2db62b"
+        },
+        "definition": "select \n    case\n        when ${aggregation:singlequote} = 'monthly' then '55742de1-95c6-45b7-80a3-cf3502c56a3d'\n        when ${aggregation:singlequote} = 'weekly' then 'facb8e28-3006-4414-9737-a4e4bd2db62b'\n        else ''\n    end",
+        "hide": 2,
+        "name": "agg_uuid",
+        "options": [],
+        "query": "select \n    case\n        when ${aggregation:singlequote} = 'monthly' then '55742de1-95c6-45b7-80a3-cf3502c56a3d'\n        when ${aggregation:singlequote} = 'weekly' then 'facb8e28-3006-4414-9737-a4e4bd2db62b'\n        else ''\n    end",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "2010-12-31T21:00:00.000Z",
+    "to": "2016-07-24T21:00:00.000Z"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "DQ Сравнение выручки",
+  "uid": "ceibuad84wa9se",
+  "version": 1,
+  "weekStart": ""
+}

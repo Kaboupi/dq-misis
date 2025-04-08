@@ -1,0 +1,102 @@
+kind: apps/DQ
+version: v1
+metadata:
+  project: customers_analytics
+  name: sales_data
+  annotations:
+    owner: Georgiy Novozhilov
+    description: >-
+      Sample DQ script for table `sales_data` both in:
+        - Postgres
+        - Clickhouse
+tasks:
+  transfer_postgres_weekly:
+    kind: TransferSQL
+    version: v1
+    spec:
+      asset:
+        domain: misis
+        key: facb8e28-3006-4414-9737-a4e4bd2db62b
+        description: Weekly turnover for Postgres
+        connection: postgres_db_conn
+        type: postgres
+      params:
+        type: SQL
+        query: >-
+          select
+            date_trunc('week', "Date") :: DATE valid_from_dttm
+            , SUM("Cost") as cost
+            , SUM("Revenue") as revenue
+          from misis_project.sales_data sd 
+          group by 1
+          order by 1;
+        fields:
+          dimDate: valid_from_dttm
+  transfer_clickhouse_weekly:
+    kind: TransferSQL
+    version: v1
+    spec:
+      asset:
+        domain: misis
+        key: facb8e28-3006-4414-9737-a4e4bd2db62b
+        description: Weekly turnover for Clickhouse
+        connection: clickhouse_db_conn
+        type: mysql
+      params:
+        type: SQL
+        query: >-
+          select
+            valid_from_dttm
+            , SUM(cost) as cost
+            , SUM(revenue) as revenue
+          from misis_project.sales_data
+          where agg_id = '2'
+          group by 1
+          order by 1
+        fields:
+          dimDate: valid_from_dttm
+  transfer_postgres_monthly:
+    kind: TransferSQL
+    version: v1
+    spec:
+      asset:
+        domain: misis
+        key: 55742de1-95c6-45b7-80a3-cf3502c56a3d
+        description: Monthly turnover for Postgres
+        connection: postgres_db_conn
+        type: postgres
+      params:
+        type: SQL
+        query: >-
+          select
+            date_trunc('month', "Date") :: DATE valid_from_dttm
+            , SUM("Cost") as cost
+            , SUM("Revenue") as revenue
+          from misis_project.sales_data sd 
+          group by 1
+          order by 1;
+        fields:
+          dimDate: valid_from_dttm
+  transfer_clickhouse_monthly:
+    kind: TransferSQL
+    version: v1
+    spec:
+      asset:
+        domain: misis
+        key: 55742de1-95c6-45b7-80a3-cf3502c56a3d
+        description: Monthly turnover for Clickhouse
+        connection: clickhouse_db_conn
+        type: mysql
+      params:
+        type: SQL
+        query: >-
+          select
+            valid_from_dttm
+            , SUM(cost) as cost
+            , SUM(revenue) as revenue
+          from misis_project.sales_data
+          where agg_id = '1'
+          group by 1
+          order by 1
+        fields:
+          dimDate: valid_from_dttm

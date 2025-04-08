@@ -1,0 +1,8 @@
+clickhouse-connect
+pandas
+boto3
+psycopg2-binary
+pyarrow
+pyyaml
+sqlalchemy
+pymysql
