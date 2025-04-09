@@ -31,7 +31,7 @@ x-airflow-common:
 services:
   airflow-postgres:
     image: postgres:13
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-postgres
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-postgres
     hostname: airflow-postgres
     environment:
       POSTGRES_USER: airflow
@@ -50,7 +50,7 @@ services:
 
   airflow-redis:
     image: redis:7.2-bookworm
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-redis
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-redis
     hostname: redis
     expose:
       - 6379
@@ -66,7 +66,7 @@ services:
 
   airflow-webserver:
     <<: *airflow-common
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-webserver
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-webserver
     command: webserver
     ports:
       - "8081:8080"
@@ -86,7 +86,7 @@ services:
 
   airflow-scheduler:
     <<: *airflow-common
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-scheduler
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-scheduler
     command: scheduler
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
@@ -104,7 +104,7 @@ services:
 
   airflow-worker:
     <<: *airflow-common
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-worker
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-worker
     command: celery worker
     healthcheck:
       test:
@@ -127,7 +127,7 @@ services:
 
   airflow-triggerer:
     <<: *airflow-common
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-triggerer
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-triggerer
     command: triggerer
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
@@ -145,7 +145,7 @@ services:
 
   airflow-init:
     <<: *airflow-common
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-init
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-init
     entrypoint: /bin/bash
     command:
       - -c
@@ -172,7 +172,7 @@ services:
 
   airflow-cli:
     <<: *airflow-common
-    container_name: ${PROJECT_NAME:-pipeline}-airflow-cli
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_airflow-cli
     profiles:
       - debug
     environment:
@@ -213,7 +213,7 @@ services:
   # DB POSTGRES SERVICE
   db-postgres:
     image: postgres:13.3
-    container_name: ${PROJECT_NAME:-pipeline}-db-postgres
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_db-postgres
     hostname: db-postgres
     environment:
       POSTGRES_DB: postgres_db
@@ -237,7 +237,7 @@ services:
   # DQP SERVICE
   db-dqp:
     image: postgres:13.3
-    container_name: ${PROJECT_NAME:-pipeline}-db-dqp
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_db-dqp
     hostname: db-dqp
     environment:
       POSTGRES_DB: dqp_db
@@ -260,7 +260,7 @@ services:
   # DB CLICKHOUSE SERVICE
   db-clickhouse:
     image: clickhouse/clickhouse-server:24.9.3
-    container_name: ${PROJECT_NAME:-pipeline}-db-clickhouse
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_db-clickhouse
     hostname: db-clickhouse
     ports:
       - "8123:8123"
@@ -281,7 +281,7 @@ services:
   # BI GRAFANA SERVICE
   bi-grafana:
     image: grafana/grafana-enterprise:latest
-    container_name: ${PROJECT_NAME:-pipeline}-bi-grafana
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_bi-grafana
     ports:
       - '3030:3000'
     environment:
@@ -306,7 +306,7 @@ services:
   # OBJECT STORAGE MINIO SERVICE
   os-minio:
     image: minio/minio:latest
-    container_name: ${PROJECT_NAME:-pipeline}-minio
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_minio
     hostname: minio
     volumes:
       - minio-data:/data
@@ -330,7 +330,7 @@ services:
   # OBJECT STORAGE MINIO INIT
   os-minio-init:
     image: minio/mc
-    container_name: ${PROJECT_NAME:-pipeline}-minio-init
+    container_name: ${COMPOSE_PROJECT_NAME:-misis-lecture}_minio-init
     depends_on:
       os-minio:
         condition: service_healthy
