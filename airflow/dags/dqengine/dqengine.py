@@ -8,7 +8,7 @@ import pandas as pd
 import logging
 
 class DQEngine:
-    """### DQEngine class
+    """## Description
     The DQEngine class is designed to perform data quality checks (DQ)
     by parsing configuration files, executing queries on supported databases
     (PostgreSQL, MySQL, ClickHouse), and exporting the results
@@ -18,7 +18,7 @@ class DQEngine:
     __schema : str = 'data_quality_checks'
     
     def __init__(self, configs_path: str):
-        """### Creates DQEngine instance
+        """## Description
         Initializes the DQEngine instance with the directory path
         containing configuration files for data quality checks.
 
@@ -30,11 +30,11 @@ class DQEngine:
         
         
     def parse_config_dir(self,):
-        """### parse_config_dir()
+        """## Description
         Scans the specified directory for configuration files
         and processes each file using the `__perform_dq_check` method.
         
-        ### Details:
+        ## Details
         - Iterates through all files in the `configs_path` directory;
         - Logs the name of each configuration file before processing;
         - Calls the `__perform_dq_check` method for each configuration file.
@@ -47,24 +47,23 @@ class DQEngine:
         
         
     def __perform_dq_check(self, config_name: str):
-        """### perform_dq_check()
+        """## Description
+        Reads and parses the YAML file via `pyyaml`.
 
-        ### Args:
+        Args:
             config_name (str): The name of the configuration file to process.
-            
-        ### Details:
-        - Reads and parses the YAML file via `pyyaml`.
-        - Extracts metadata and tasks from the configuration.
-        - Constructs a table name for storing DQ check results as `f"{conf_metadata['project']}__{conf_metadata["name"]}"`.
-        - - Iterates through each task in configs:
-        - - Parses the task's specifications (e.g., query, connection details);
-        - - Validates the connection type (must be one of postgres, mysql, or clickhouse);
-        - - Transforms the resulting DataFrame by adding necessary columns (key and task);
-        - - Exports the transformed DataFrame to the centralized PostgreSQL Database.
 
-        ### Raises:
-        - **ValueError** : If the configuration version is not "v1"
-        - **ValueError** : If the connection type is not supported.
+        Raises:
+            **ValueError**: If the configuration version is not "v1"
+            **ValueError**: If the connection type is not supported.
+            
+        ## Details
+        Constructs a table name for storing DQ check results as `f"{conf_metadata['project']}__{conf_metadata["name"]}"`.
+        - Iterates through each task in configs:
+        - Parses the task's specifications (e.g., query, connection details);
+        - Validates the connection type (must be one of postgres, mysql, or clickhouse);
+        - Transforms the resulting DataFrame by adding necessary columns (key and task);
+        - Exports the transformed DataFrame to the centralized PostgreSQL Database.
         """
         import yaml
         
@@ -124,10 +123,10 @@ class DQEngine:
             logging.info('Success!')
         
     def __get_postgres_df(self,):
-        """### __get_postgres_df()
+        """## Description
         Executes a SQL query on a PostgreSQL database and loads the result into a Pandas DataFrame.
 
-        ### Details:
+        ## Details
         - Uses the `PostgresHook` to execute the query and retrieve the result as a Pandas DataFrame;
         - Stores the resulting DataFrame in the `self.comparison_df` instance variable.
         """
@@ -135,10 +134,10 @@ class DQEngine:
 
     
     def __get_clickhouse_df(self,):
-        """### __get_clickhouse_df()
+        """## Description
         Executes a SQL query on a ClickHouse database and loads the result into a Pandas DataFrame.
 
-        ### Details:
+        ## Details
         - Uses the `BaseHook` to execute the query and retrieve the result as a Pandas DataFrame;
         - Connects to the ClickHouse database using `clickhouse-connect`;
         - Stores the resulting DataFrame in the `self.comparison_df` instance variable.
@@ -160,20 +159,20 @@ class DQEngine:
         
     
     def __export_df(self, if_exists: str = 'append') -> None:
-        """### __export_df()
+        """## Description
         Exports the transformed DataFrame `comparison_df` to a centralized PostgreSQL Database to analyze check results.
 
-        ### Args:
+        Args:
             if_exists (str, optional): Specifies the behavior if the table already exists. Defaults to `'append'`.
 
-        ### Details:
+        ## Details
         - Establishes a connection to the centralized PostgreSQL Database using `sqlalchemy` and `psycopg2-binary`;
         - Deletes existing rows in the target table that match the current key and task to avoid duplicates;
         - Writes the transformed DataFrame to the target table using `pandas.DataFrame.to_sql()` with batch insertion (`method='multi'` and `chunksize=1000`);
         - Closes the database connection and disposes of the SQLAlchemy engine after the operation.
 
-        ### Raises:
-            **ValueError** : If there's an issue with the DQP connection
+        Raises:
+            **ValueError**: If there's an issue with the DQP connection
         """
         from sqlalchemy import create_engine
         import psycopg2 as pg
