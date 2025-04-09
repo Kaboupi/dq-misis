@@ -52,7 +52,6 @@ def transfer_postgres_to_s3(**kwargs):
 
     logging.info('Success!')
 
-
 def transfer_s3_to_clickhouse(**kwargs):
     from clickhouse_connect import get_client
     from functions.func import clickhouse_query_builder
@@ -96,7 +95,6 @@ def transfer_s3_to_clickhouse(**kwargs):
     
     logging.info('Success!')
         
-
 with DAG(
     dag_id="postgres_s3_clickhouse",
     schedule_interval="@once",

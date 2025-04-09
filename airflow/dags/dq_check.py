@@ -2,14 +2,13 @@ from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-from config.config import DQ_CONFIG_DIR
+from config.config import DQ_CONFIG_DIR, DQP_CONN_ID
 from dqengine.dqengine import DQEngine
         
 
 def perform_dq():
-    engine = DQEngine(DQ_CONFIG_DIR)
-    engine.parse_config_dir()
-    
+    dq_engine = DQEngine(DQP_CONN_ID)
+    dq_engine.parse_config_dir(DQ_CONFIG_DIR)
 
 with DAG(
     dag_id="dq_dag",
