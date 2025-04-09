@@ -216,7 +216,6 @@ class DQEngine:
                     conn.commit()
         except Exception as e:
             logging.error('Error during export: {e}')
-            raise
         
         df.to_sql(
             name=table_name,
