@@ -223,8 +223,8 @@ services:
       - "5445:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./init_scripts/init_source.sql:/docker-entrypoint-initdb.d/init_source.sql:ro
-      - ./init_data:/init_data:ro
+      - ./source/init_scripts/init_source.sql:/docker-entrypoint-initdb.d/init_source.sql:ro
+      - ./source/source_data:/source_data:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres_user -d postgres_db"]
       interval: 10s
@@ -247,7 +247,7 @@ services:
       - "5435:5432"
     volumes:
       - dqp-data:/var/lib/postgresql/data
-      - ./init_scripts/init_dqp.sql:/docker-entrypoint-initdb.d/init_dqp.sql:ro
+      - ./source/init_scripts/init_dqp.sql:/docker-entrypoint-initdb.d/init_dqp.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U dqp_user -d dqp_db"]
       interval: 10s
@@ -268,7 +268,7 @@ services:
       - "9440:9440"
     volumes:
       - clickhouse-data:/var/lib/clickhouse
-      - ./clickhouse:/etc/clickhouse-server
+      - ./source/clickhouse:/etc/clickhouse-server
     networks:
       af_network:
     healthcheck:
@@ -291,9 +291,9 @@ services:
     restart: unless-stopped
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/dashboards:/etc/dashboards
+      - ./source/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./source/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./source/grafana/dashboards:/etc/dashboards
     networks:
       af_network:
     healthcheck:
@@ -308,6 +308,8 @@ services:
     image: minio/minio:latest
     container_name: ${PROJECT_NAME:-pipeline}-minio
     hostname: minio
+    volumes:
+      - minio-data:/data
     ports:
       - "9001:9001"
       - "9003:9000"
@@ -346,6 +348,7 @@ volumes:
   postgres-db-volume:
   postgres-data:
   dqp-data:
+  minio-data:
   clickhouse-data:
   grafana-data:
 
