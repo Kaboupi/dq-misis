@@ -43,5 +43,5 @@ COPY misis_project.sales_data(
 	, "Cost"
 	, "Revenue"
 )
-FROM '/init_data/sales_data.csv'
+FROM '/source_data/sales_data.csv'
 DELIMITER ',' CSV HEADER;
