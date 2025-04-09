@@ -113,9 +113,10 @@ class DQEngine:
                 
             # Add nessessary cols via pandas
             logging.info(f'Transform dataframe step with index as {self.conf_index}')
-            self.comparison_df.set_index(self.conf_index, inplace=True)
+            self.comparison_df = self.comparison_df.set_index(self.conf_index)
             self.comparison_df['key'] = self.conf_key
             self.comparison_df['task'] = task
+            self.comparison_df['_updated_dttm'] = pd.Timestamp.now()
         
             # Start export
             self.__export_df()
